@@ -8,25 +8,182 @@
       * {
         margin: 0;
         padding: 0;
+
+        font-size: 10px;
+        background-color: black;
+        color: white;
+        font-family: "Pretendard";
+      }
+
+      ::-webkit-scrollbar {
+        display: none;
       }
 
       #container {
         width: 100vw;
         min-height: 100vh;
-        display: flex;
-        justify-content: center;
 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20rem;
+
+        padding: 0rem 10rem;
+        box-sizing: border-box;
+      }
+
+      #header {
+        background-color: black;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        width: 100vw;
+        height: 100px;
+
+        padding: 5rem 5rem;
+        box-sizing: border-box;
+
+        border-bottom: 3px solid white;
+      }
+
+      @keyframes fontRainbow {
+        0% {
+          color: red;
+        }
+        10% {
+          color: orange;
+        }
+        20% {
+          color: yellow;
+        }
+        30% {
+          color: yellowgreen;
+        }
+        40% {
+          color: green;
+        }
+        50% {
+          color: blue;
+        }
+        60% {
+          color: blueviolet;
+        }
+        70% {
+          color: purple;
+        }
+        80% {
+          color: violet;
+        }
+        90% {
+          color: pink;
+        }
+        100% {
+          color: red;
+        }
+      }
+
+      #Title {
+        font-size: 3.2rem;
+        font-weight: 600;
+
+        /* animation: fontRainbow 10s infinite cubic-bezier(0.165, 0.84, 0.44, 1); */
+      }
+
+      #championDataHeader {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        padding: 0 20rem;
+        box-sizing: border-box;
+      }
+
+      #positionButtonContainer {
+        display: flex;
+        gap: 0.05rem;
+      }
+
+      #positionChangeButton {
         background-color: black;
         color: white;
-        font-family: "Pretendard";
+
+        font-size: 2rem;
+        padding: 1rem 1rem;
+
+        cursor: pointer;
+
+        outline: none;
+        border: none;
+      }
+
+      .selectedButton {
+        font-weight: 600;
+        box-shadow: 0px 3px 0px white;
+      }
+
+      #dataTableContainer {
+        height: fit-content;
+
+        display: grid;
+        grid-template-columns: 2fr repeat(5, 1fr);
+      }
+
+      #tableAttribute {
+        width: 100%;
+        height: 100%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        border-radius: 0.5rem;
+
+        background-color: rgb(35, 35, 70);
+        font-size: 2.4rem;
+
+        padding: 1rem 5rem;
+      }
+
+      .championDataBox {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2rem;
       }
     </style>
   </head>
   <body>
     <div id="container">
-      <div>
-        <h1>롤탑티어표</h1>
+      <div id="header">
+        <span id="Title">롤티어표</span>
+      </div>
+      <div id="championDataHeader">
+        <span id="Title">포지션별 챔피언 정보</span>
+        <div id="positionButtonContainer">
+          <button id="positionChangeButton">탑</button>
+          <button id="positionChangeButton">정글</button>
+          <button id="positionChangeButton">미드</button>
+          <button id="positionChangeButton">원딜</button>
+          <button id="positionChangeButton" class="selectedButton">서폿</button>
+        </div>
+      </div>
+      <div id="dataTableContainer">
+        <div id="tableAttribute">챔피언 이름</div>
+        <div id="tableAttribute">포지션</div>
+        <div id="tableAttribute">승률</div>
+        <div id="tableAttribute">픽률</div>
+        <div id="tableAttribute">밴률</div>
+        <div id="tableAttribute">표본 수</div>
       </div>
     </div>
+
+    <script>
+      let myChampData = `{{ champData | safe }}`;
+      console.log(myChampData);
+
+      let dataTableContainer = document.getElementById("dataTableContainer");
+      let championDataBox = document.createElement("div");
+      championDataBox.className = "championDataBox";
+    </script>
   </body>
 </html>
