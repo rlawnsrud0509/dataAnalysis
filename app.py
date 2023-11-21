@@ -8,17 +8,17 @@ def lolPsdata():
     url="https://fow.kr/stats"
     response = requests.get(url)
 
-    champData = {}
+    champData = []
 
     soup = BeautifulSoup(response.text, 'html.parser')
     for i, tr_tag in enumerate(soup.find_all('tr')):
         position = tr_tag.get('position')
         rname = tr_tag.get('rname')
 
-        champData.setdefault(i, [position, rname])
+        champData.append({i: [rname, position]})
 
     for i, rate in enumerate(soup.find_all('td', class_='td_rate')):
-        champData[math.trunc(i/6)+1].append(rate.text)
+        champData[math.trunc(i/6)+1][i].append(rate)
 
     return render_template('index.html', champData=champData )
 

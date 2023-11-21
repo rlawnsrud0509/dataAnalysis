@@ -175,6 +175,7 @@
         <div id="tableAttribute">밴률</div>
         <div id="tableAttribute">표본 수</div>
       </div>
+      {{champData}}
     </div>
 
     <script>
@@ -184,6 +185,10 @@
       let dataTableContainer = document.getElementById("dataTableContainer");
       let championDataBox = document.createElement("div");
       championDataBox.className = "championDataBox";
+
+      console.log(typeof myChampData);
+
+      for (let i = 0; i < myChampData.length - 1; i++) {}
     </script>
   </body>
 </html>
