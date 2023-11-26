@@ -19,6 +19,10 @@
         display: none;
       }
 
+      html {
+        margin-bottom: 10rem;
+      }
+
       #container {
         width: 100vw;
         min-height: 100vh;
@@ -26,7 +30,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 20rem;
+        gap: 10rem;
 
         padding: 0rem 10rem;
         box-sizing: border-box;
@@ -94,6 +98,7 @@
         width: 100%;
         display: flex;
         flex-direction: column;
+        gap: 2rem;
         padding: 0 20rem;
         box-sizing: border-box;
       }
@@ -103,7 +108,7 @@
         gap: 0.05rem;
       }
 
-      #positionChangeButton {
+      .positionChangeButton {
         background-color: black;
         color: white;
 
@@ -116,19 +121,27 @@
         border: none;
       }
 
-      .selectedButton {
-        font-weight: 600;
-        box-shadow: 0px 3px 0px white;
+      .positionChangeButton:hover {
+        background-color: rgb(58, 58, 58);
+      }
+
+      .positionChangeButton:active {
+        background-color: rgb(43, 42, 42);
       }
 
       #dataTableContainer {
         height: fit-content;
 
         display: grid;
+        justify-content: center;
+        align-items: center;
+
+        grid-row-gap: 3rem;
+
         grid-template-columns: 2fr repeat(5, 1fr);
       }
 
-      #tableAttribute {
+      .tableAttribute {
         width: 100%;
         height: 100%;
 
@@ -136,12 +149,11 @@
         justify-content: center;
         align-items: center;
 
-        border-radius: 0.5rem;
-
         background-color: rgb(35, 35, 70);
         font-size: 2.4rem;
 
         padding: 1rem 5rem;
+        box-sizing: border-box;
       }
 
       .championDataBox {
@@ -149,6 +161,7 @@
         justify-content: center;
         align-items: center;
         font-size: 2rem;
+        padding: 1rem 5rem;
       }
     </style>
   </head>
@@ -160,35 +173,167 @@
       <div id="championDataHeader">
         <span id="Title">포지션별 챔피언 정보</span>
         <div id="positionButtonContainer">
-          <button id="positionChangeButton">탑</button>
-          <button id="positionChangeButton">정글</button>
-          <button id="positionChangeButton">미드</button>
-          <button id="positionChangeButton">원딜</button>
-          <button id="positionChangeButton" class="selectedButton">서폿</button>
+          <button
+            class="positionChangeButton"
+            value="top"
+            onclick="ChangePosition(event)"
+          >
+            탑
+          </button>
+          <button
+            class="positionChangeButton"
+            value="jungle"
+            onclick="ChangePosition(event)"
+          >
+            정글
+          </button>
+          <button
+            class="positionChangeButton"
+            value="middle"
+            onclick="ChangePosition(event)"
+          >
+            미드
+          </button>
+          <button
+            class="positionChangeButton"
+            value="bottom"
+            onclick="ChangePosition(event)"
+          >
+            원딜
+          </button>
+          <button
+            class="positionChangeButton"
+            value="utility"
+            onclick="ChangePosition(event)"
+          >
+            서폿
+          </button>
         </div>
       </div>
-      <div id="dataTableContainer">
-        <div id="tableAttribute">챔피언 이름</div>
-        <div id="tableAttribute">포지션</div>
-        <div id="tableAttribute">승률</div>
-        <div id="tableAttribute">픽률</div>
-        <div id="tableAttribute">밴률</div>
-        <div id="tableAttribute">표본 수</div>
+      <div class="아오제발">
+        <div class="진짜제발"></div>
+        <div id="dataTableContainer"></div>
       </div>
-      {{champData}}
     </div>
 
     <script>
-      let myChampData = `{{ champData | safe }}`;
-      console.log(myChampData);
+      let myChampData = `{{ champData | safe }}`.split("[");
 
       let dataTableContainer = document.getElementById("dataTableContainer");
-      let championDataBox = document.createElement("div");
-      championDataBox.className = "championDataBox";
+      let positionArray = [
+        "챔피언 이름",
+        "포지션",
+        "승률",
+        "픽률",
+        "밴률",
+        "통계 수",
+      ];
 
-      console.log(typeof myChampData);
+      let showPosition = "top";
 
-      for (let i = 0; i < myChampData.length - 1; i++) {}
+      // 문자열 타입인 myChampData를 배열 형태로 변환
+      for (let i = 0; i < myChampData.length; i++) {
+        myChampData[i] = myChampData[i].split(",");
+        if (myChampData[i].length == 10) {
+          data = myChampData[i][5] + myChampData[i][6];
+          myChampData[i][5] = data;
+        }
+      }
+
+      for (let i = 0; i < myChampData.length; i++) {
+        for (let j = 0; j < myChampData[i].length; j++) {
+          myChampData[i][j] = myChampData[i][j].replace('"', "");
+          myChampData[i][j] = myChampData[i][j].replace('"', "");
+          myChampData[i][j] = myChampData[i][j].replace(" ", "");
+        }
+        myChampData[i] = myChampData[i].slice(0, 6);
+      }
+
+      myChampData = myChampData.slice(3, myChampData.length);
+
+      console.log(myChampData);
+
+      //표에 데이터 추가
+      for (let i = 0; i < positionArray.length; i++) {
+        let tableAttribute = document.createElement("div");
+        tableAttribute.className = "tableAttribute";
+        tableAttribute.textContent = positionArray[i];
+        dataTableContainer.appendChild(tableAttribute);
+      }
+
+      for (let i = 0; i < myChampData.length; i++) {
+        for (let j = 0; j < 6; j++) {
+          if (myChampData[i][1] == showPosition) {
+            let championDataBox = document.createElement("div");
+            championDataBox.className = "championDataBox";
+            let data = myChampData[i][j];
+            // 포지션명 변경
+            if (data == "bottom") {
+              data = "원딜";
+              championDataBox.textContent = data;
+            } else if (data == "top") {
+              data = "탑";
+              championDataBox.textContent = data;
+            } else if (data == "middle") {
+              data = "미드";
+              championDataBox.textContent = data;
+            } else if (data == "jungle") {
+              data = "정글";
+              championDataBox.textContent = data;
+            } else if (data == "utility") {
+              data = "서폿";
+              championDataBox.textContent = data;
+            } else {
+              championDataBox.textContent = myChampData[i][j];
+            }
+
+            console.log(data);
+            dataTableContainer.appendChild(championDataBox);
+          }
+        }
+      }
+
+      // 포지션 별 챔피언 변경
+      function ChangePosition(e) {
+        showPosition = e.target.value;
+        dataTableContainer.innerHTML = "";
+        for (let i = 0; i < positionArray.length; i++) {
+          let tableAttribute = document.createElement("div");
+          tableAttribute.className = "tableAttribute";
+          tableAttribute.textContent = positionArray[i];
+          dataTableContainer.appendChild(tableAttribute);
+        }
+
+        for (let i = 0; i < myChampData.length; i++) {
+          for (let j = 0; j < 6; j++) {
+            if (myChampData[i][1] == showPosition) {
+              let championDataBox = document.createElement("div");
+              championDataBox.className = "championDataBox";
+              let data = myChampData[i][j];
+              // 포지션명 변경
+              if (data == "bottom") {
+                data = "원딜";
+                championDataBox.textContent = data;
+              } else if (data == "top") {
+                data = "탑";
+                championDataBox.textContent = data;
+              } else if (data == "middle") {
+                data = "미드";
+                championDataBox.textContent = data;
+              } else if (data == "jungle") {
+                data = "정글";
+                championDataBox.textContent = data;
+              } else if (data == "utility") {
+                data = "서폿";
+                championDataBox.textContent = data;
+              } else {
+                championDataBox.textContent = myChampData[i][j];
+              }
+              dataTableContainer.appendChild(championDataBox);
+            }
+          }
+        }
+      }
     </script>
   </body>
 </html>
