@@ -1,6 +1,8 @@
 from flask import Flask, render_template
 import requests, json
 from bs4 import BeautifulSoup
+import plotly.graph_objs as go
+
 app = Flask(__name__)
 
 @app.route("/")
@@ -27,6 +29,53 @@ def lolPsdata():
         champData.append([rname, position, *array[i-1]])
 
     champData_json = json.dumps(champData)
+    champDataArray = str(champData_json).split("[")
+
+    for i in range(len(champDataArray)):
+        champDataArray[i] = champDataArray[i].split(",")
+        if len(champDataArray[i]) == 10:
+            data = champDataArray[i][5] + champDataArray[i][6]
+            champDataArray[i][5] = data
+
+    for i in range(len(champDataArray)):
+        for j in range(len(champDataArray[i])):
+            champDataArray[i][j] = champDataArray[i][j].replace('"', "")
+            champDataArray[i][j] = champDataArray[i][j].replace('"', "")
+            champDataArray[i][j] = champDataArray[i][j].replace(" ", "")
+        champDataArray[i] = champDataArray[i][:6]
+
+    champDataArray = champDataArray[3:]
+        
+    print(champDataArray)
+
+    names = [item[0] for item in champDataArray]
+
+# 승률과 픽률을 숫자로 변환하여 추출
+    win_rates = [float(item[2].strip('%')) for item in champDataArray]
+    pick_rates = [float(item[3].strip('%')) for item in champDataArray]
+
+# 산점도 생성
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(
+        x=win_rates,
+        y=pick_rates,
+        mode='markers+text',  # 텍스트를 포함한 마커 모드
+        text=names,  # 챔피언 이름을 텍스트로 지정
+        textposition='top center',  # 텍스트 위치 설정
+        marker=dict(size=6, color='white'),  # 마커 크기와 색상
+    ))
+
+    fig.update_layout(
+        title='챔피언의 승률과 픽률에 따른 산점도',
+        xaxis=dict(title='승률'),
+        yaxis=dict(title='픽률'),
+        font=dict(family="Pretendard",color='white'), 
+        plot_bgcolor='black', 
+    )
+
+    fig.show()
+
 
     return render_template('index.html', champData=champData_json )
 
