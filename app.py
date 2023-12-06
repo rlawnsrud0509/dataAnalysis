@@ -49,28 +49,26 @@ def lolPsdata():
     print(champDataArray)
 
     names = [item[0] for item in champDataArray]
-
-# 승률과 픽률을 숫자로 변환하여 추출
+    
     win_rates = [float(item[2].strip('%')) for item in champDataArray]
     pick_rates = [float(item[3].strip('%')) for item in champDataArray]
 
-# 산점도 생성
     fig = go.Figure()
 
     fig.add_trace(go.Scatter(
         x=win_rates,
         y=pick_rates,
-        mode='markers+text',  # 텍스트를 포함한 마커 모드
-        text=names,  # 챔피언 이름을 텍스트로 지정
-        textposition='top center',  # 텍스트 위치 설정
-        marker=dict(size=6, color='white'),  # 마커 크기와 색상
+        mode='markers+text', 
+        text=names,  
+        textposition='top center',  
+        marker=dict(size=6, color='white'),  
     ))
 
     fig.update_layout(
         title='챔피언의 승률과 픽률에 따른 산점도',
         xaxis=dict(title='승률'),
         yaxis=dict(title='픽률'),
-        font=dict(family="Pretendard",color='white'), 
+        font=dict(color='white'), 
         plot_bgcolor='black', 
     )
 
